@@ -7,10 +7,11 @@ the same log format as the [`devlog`](https://github.com/hermannm/devlog) librar
 
 `devlog-tracing` is pretty much a drop-in replacement for
 [`tracing-subscriber`](https://github.com/tokio-rs/tracing/tree/master/tracing-subscriber#readme),
-so the initialization works the same - just replace `tracing_subscriber` with `devlog_tracing`:
+so the initialization works the same - just replace `tracing_subscriber::fmt()` with
+`devlog_tracing::subscriber()`:
 
 ```rust
-devlog_tracing::fmt().init();
+devlog_tracing::subscriber().init();
 ```
 
 After this, log events produced with `tracing` will be formatted by the `devlog-tracing` subscriber.

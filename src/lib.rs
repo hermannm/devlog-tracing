@@ -7,6 +7,6 @@ mod field_format;
 mod subscriber_builder;
 mod time_format;
 
-pub fn fmt() -> DevLogSubscriberBuilder<DevLogTimeFormat> {
+pub fn subscriber() -> DevLogSubscriberBuilder<DevLogTimeFormat> {
     DevLogSubscriberBuilder::default()
 }
