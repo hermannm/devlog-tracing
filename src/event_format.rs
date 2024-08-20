@@ -110,6 +110,11 @@ impl<TimeFormatT> DevLogEventFormat<TimeFormatT> {
             };
 
             writer.write_with_color(level_string, color)?;
+
+            if !self.display_target {
+                writer.write_with_color(':', COLOR_GRAY)?;
+            }
+
             writer.write_char(' ')?;
         }
 
