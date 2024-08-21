@@ -1,28 +1,19 @@
 use core::fmt;
 
-use tracing_subscriber::fmt::{
-    format::Writer,
-    time::{ChronoLocal, FormatTime},
-};
+use chrono::Local;
+use tracing_subscriber::fmt::{format::Writer, time::FormatTime};
 
+#[derive(Default)]
 pub struct DevLogTimeFormat {
-    inner: ChronoLocal,
-}
-
-impl Default for DevLogTimeFormat {
-    fn default() -> Self {
-        Self {
-            inner: ChronoLocal::new("%H:%M:%S".to_owned()),
-        }
-    }
+    // Prevents direct struct initialization, so we can add fields here later as a non-breaking
+    // change.
+    _private: (),
 }
 
 impl FormatTime for DevLogTimeFormat {
-    #[inline]
     fn format_time(&self, writer: &mut Writer<'_>) -> fmt::Result {
-        writer.write_char('[')?;
-        self.inner.format_time(writer)?;
-        writer.write_char(']')?;
+        let time = Local::now();
+        write!(writer, "[{}]", time.format("%H:%M:%S"))?;
         Ok(())
     }
 }

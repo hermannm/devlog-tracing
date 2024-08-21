@@ -14,7 +14,7 @@ pub struct DevLogSubscriberBuilder<TimeFormatT> {
 impl Default for DevLogSubscriberBuilder<DevLogTimeFormat> {
     fn default() -> Self {
         Self {
-            field_format: DevLogFieldFormat::default(),
+            field_format: DevLogFieldFormat,
             event_format: DevLogEventFormat::default(),
         }
     }

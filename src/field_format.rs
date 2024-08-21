@@ -35,12 +35,7 @@ use std::{error::Error, fmt::Debug};
 /// ```
 /// If your terminal supports ASCII color codes, the log field names ("reason" and "severity") above
 /// will be colored, to distinguish them from field values.
-#[derive(Default)]
-pub(crate) struct DevLogFieldFormat {
-    // Prevents direct struct initialization, so we can add fields here later as a non-breaking
-    // change.
-    _private: (),
-}
+pub(crate) struct DevLogFieldFormat;
 
 impl<'a> MakeVisitor<Writer<'a>> for DevLogFieldFormat {
     type Visitor = DevLogFieldVisitor<'a>;

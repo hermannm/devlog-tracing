@@ -8,4 +8,4 @@ authors = ["hermannm"]
 chrono = "0.4.38"
 tracing = "0.1.40"
 tracing-core = "0.1.32"
-tracing-subscriber = { version = "0.3.18", features = ["chrono"] }
+tracing-subscriber = "0.3.18"
