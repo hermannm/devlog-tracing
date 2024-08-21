@@ -1,7 +1,8 @@
 # devlog-tracing
 
-Log subscriber for the [`tracing`](https://github.com/tokio-rs/tracing) Rust logging library, using
-the same log format as the [`devlog`](https://github.com/hermannm/devlog) library for Go.
+Log subscriber for Rust's [`tracing`](https://github.com/tokio-rs/tracing) library, with a
+human-readable output format designed for development builds. Uses the same format as the
+[`devlog`](https://github.com/hermannm/devlog) library for Go.
 
 ## Usage
 
