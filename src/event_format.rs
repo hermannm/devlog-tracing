@@ -157,13 +157,21 @@ impl<TimeFormatT> DevLogEventFormat<TimeFormatT> {
         if let Some(scope) = ctx.event_scope() {
             let mut seen = false;
 
-            for span in scope.from_root() {
+            for span in scope {
+                if !seen {
+                    write_field_name(writer, "span")?;
+                }
                 seen = true;
+
+                writer.write_str("\n    ")?;
+                writer.write_with_color('-', COLOR_GRAY)?;
+                writer.write_char(' ')?;
+                writer.write_with_color(span.metadata().name(), COLOR_CYAN)?;
 
                 let extensions = span.extensions();
                 if let Some(fields) = &extensions.get::<FormattedFields<DevLogFieldFormat>>() {
                     if !fields.is_empty() {
-                        write_field_name(writer, span.metadata().name())?;
+                        writer.write_with_color(':', COLOR_GRAY)?;
                         write!(writer, "{fields}")?;
                     }
                 }

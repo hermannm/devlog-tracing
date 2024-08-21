@@ -50,7 +50,7 @@ impl<'a> MakeVisitor<Writer<'a>> for DevLogFieldFormat {
             writer,
             result: Ok(()),
             first_visit: true,
-            delimiter: "\n    ",
+            delimiter: "\n        ", // 8-space indent
         }
     }
 }
@@ -61,7 +61,7 @@ impl DevLogFieldFormat {
             writer,
             result: Ok(()),
             first_visit: true,
-            delimiter: "\n  ",
+            delimiter: "\n  ", // 2-space indent
         }
     }
 }
