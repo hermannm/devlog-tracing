@@ -34,30 +34,30 @@ impl<'a> MakeVisitor<Writer<'a>> for DevLogFieldFormat {
 
     fn make_visitor(&self, writer: Writer<'a>) -> Self::Visitor {
         DevLogFieldVisitor {
+            mode: VisitorMode::Span,
             writer,
             result: Ok(()),
             first_visit: true,
-            delimiter: "\n        ", // 8-space indent
         }
     }
 }
 
 impl DevLogFieldFormat {
-    pub(crate) fn make_field_visitor<'a>(&self, writer: Writer<'a>) -> DevLogFieldVisitor<'a> {
+    pub(crate) fn make_event_visitor<'a>(&self, writer: Writer<'a>) -> DevLogFieldVisitor<'a> {
         DevLogFieldVisitor {
+            mode: VisitorMode::Event,
             writer,
             result: Ok(()),
             first_visit: true,
-            delimiter: "\n  ", // 2-space indent
         }
     }
 }
 
 pub(crate) struct DevLogFieldVisitor<'a> {
+    mode: VisitorMode,
     writer: Writer<'a>,
     result: fmt::Result,
     first_visit: bool,
-    delimiter: &'static str,
 }
 
 impl<'a> DevLogFieldVisitor<'a> {
@@ -85,20 +85,33 @@ impl<'a> DevLogFieldVisitor<'a> {
         };
     }
 
-    fn write_string_list_item(&mut self, value: &str) {
+    fn write_string_list_item(&mut self, value: &str, first_item: bool) {
         if self.result.is_err() {
             return;
         }
 
-        self.result = if self.writer.has_ansi_escapes() {
-            write!(
-                self.writer,
-                "{}  {COLOR_GRAY}-{COLOR_RESET} {value}",
-                self.delimiter,
-            )
-        } else {
-            write!(self.writer, "{}  - {value}", self.delimiter)
-        }
+        match self.mode {
+            VisitorMode::Event => {
+                let delimiter = self.mode.delimiter(self.writer.has_ansi_escapes());
+                self.result = if self.writer.has_ansi_escapes() {
+                    write!(
+                        self.writer,
+                        "{delimiter}  {COLOR_GRAY}-{COLOR_RESET} {value}"
+                    )
+                } else {
+                    write!(self.writer, "{delimiter}  - {value}")
+                }
+            }
+            VisitorMode::Span => {
+                self.result = if first_item {
+                    write!(self.writer, "{value}")
+                } else if self.writer.has_ansi_escapes() {
+                    write!(self.writer, "{COLOR_CYAN},{COLOR_RESET} {value}")
+                } else {
+                    write!(self.writer, ", {value}")
+                }
+            }
+        };
     }
 
     fn delimit(&mut self) {
@@ -106,7 +119,7 @@ impl<'a> DevLogFieldVisitor<'a> {
             return;
         }
 
-        let delimiter = self.delimiter;
+        let delimiter = self.mode.delimiter(self.writer.has_ansi_escapes());
         self.result = self.writer().write_str(delimiter);
     }
 }
@@ -116,7 +129,7 @@ impl<'a> Visit for DevLogFieldVisitor<'a> {
         // A log line may or may not contain a main log message, which will be the first field and
         // have the name "message". If we do get such a message, we don't want to delimit or write
         // field name for it.
-        if self.first_visit && field.name() != "message" {
+        if self.first_visit && self.mode == VisitorMode::Event && field.name() != "message" {
             self.first_visit = false;
         }
 
@@ -130,7 +143,11 @@ impl<'a> Visit for DevLogFieldVisitor<'a> {
 
         if self.first_visit {
             self.first_visit = false;
-            self.result = write!(self.writer, "{value:?}")
+
+            match self.mode {
+                VisitorMode::Event => self.result = write!(self.writer, "{value:?}"),
+                VisitorMode::Span => self.write_field(field, value),
+            }
         } else {
             self.write_field(field, value)
         }
@@ -167,10 +184,10 @@ impl<'a> Visit for DevLogFieldVisitor<'a> {
 
         // If the error has a cause, we format it as a list where each cause is a list item
         self.write_field_name(field);
-        self.write_string_list_item(&error.to_string());
-        self.write_string_list_item(&cause.to_string());
+        self.write_string_list_item(&error.to_string(), true);
+        self.write_string_list_item(&cause.to_string(), false);
         while let Some(cause) = cause.source() {
-            self.write_string_list_item(&cause.to_string());
+            self.write_string_list_item(&cause.to_string(), false);
         }
     }
 }
@@ -184,5 +201,28 @@ impl<'a> VisitOutput<fmt::Result> for DevLogFieldVisitor<'a> {
 impl<'a> VisitFmt for DevLogFieldVisitor<'a> {
     fn writer(&mut self) -> &mut dyn fmt::Write {
         &mut self.writer
+    }
+}
+
+#[derive(PartialEq, Eq)]
+enum VisitorMode {
+    Event,
+    Span,
+}
+
+impl VisitorMode {
+    fn delimiter(&self, color_enabled: bool) -> &'static str {
+        match self {
+            VisitorMode::Event => "\n  ",
+            VisitorMode::Span => {
+                if color_enabled {
+                    // Gray color
+                    // Can't use constants from `color.rs` here, since `concat!` requires literals
+                    concat!("\x1b[37m", ",", "\x1b[0m", " ")
+                } else {
+                    ", "
+                }
+            }
+        }
     }
 }

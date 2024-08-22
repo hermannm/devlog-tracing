@@ -141,7 +141,7 @@ impl<TimeFormatT> DevLogEventFormat<TimeFormatT> {
     where
         SubscriberT: Subscriber + for<'a> LookupSpan<'a>,
     {
-        let mut visitor = ctx.field_format().make_field_visitor(writer.by_ref());
+        let mut visitor = ctx.field_format().make_event_visitor(writer.by_ref());
         event.record(&mut visitor);
         visitor.finish()
     }
@@ -171,8 +171,9 @@ impl<TimeFormatT> DevLogEventFormat<TimeFormatT> {
                 let extensions = span.extensions();
                 if let Some(fields) = &extensions.get::<FormattedFields<DevLogFieldFormat>>() {
                     if !fields.is_empty() {
-                        writer.write_with_color(':', COLOR_GRAY)?;
+                        writer.write_with_color(" { ", COLOR_GRAY)?;
                         write!(writer, "{fields}")?;
+                        writer.write_with_color(" } ", COLOR_GRAY)?;
                     }
                 }
             }
