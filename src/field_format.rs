@@ -13,14 +13,6 @@ use std::{error::Error, fmt::Debug};
 /// aims to improve readability over the default log field format, which appends log fields on the
 /// same line, making it hard to read when multiple fields are appended.
 ///
-/// ### Usage
-///
-/// ```rust
-/// tracing_subscriber::fmt()
-///     .fmt_fields(DevLogFieldFormatter::new())
-///     .init();
-/// ```
-///
 /// ### Example
 ///
 /// This example log:
@@ -29,7 +21,7 @@ use std::{error::Error, fmt::Debug};
 /// ```
 /// ...gets printed like this:
 /// ```text
-/// ERROR Something went wrong
+/// [17:51:18] ERROR: Something went wrong
 ///   reason: "Bad things"
 ///   severity: "BAD"
 /// ```
