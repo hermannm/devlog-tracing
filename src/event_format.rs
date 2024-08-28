@@ -171,9 +171,14 @@ impl<TimeFormatT> DevLogEventFormat<TimeFormatT> {
                 let extensions = span.extensions();
                 if let Some(fields) = &extensions.get::<FormattedFields<DevLogFieldFormat>>() {
                     if !fields.is_empty() {
-                        writer.write_with_color(" { ", COLOR_GRAY)?;
+                        writer.write_char(' ')?;
+                        writer.write_with_color('{', COLOR_GRAY)?;
+                        writer.write_char(' ')?;
+
                         write!(writer, "{fields}")?;
-                        writer.write_with_color(" } ", COLOR_GRAY)?;
+
+                        writer.write_char(' ')?;
+                        writer.write_with_color('}', COLOR_GRAY)?;
                     }
                 }
             }
