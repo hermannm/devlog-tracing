@@ -65,10 +65,9 @@ where
 
         self.format_timestamp(&mut writer)?;
         self.format_level(*metadata.level(), &mut writer)?;
-        self.format_target(metadata, &mut writer)?;
         self.format_fields(ctx, &mut writer, event)?;
         self.format_spans(ctx, &mut writer)?;
-        self.format_source_location(metadata, &mut writer)?;
+        self.format_target_and_source_location(metadata, &mut writer)?;
         self.format_thread_info(&mut writer)?;
 
         writeln!(writer)
@@ -110,22 +109,7 @@ impl<TimeFormatT> DevLogEventFormat<TimeFormatT> {
             };
 
             writer.write_with_color(level_string, color)?;
-
-            if !self.display_target {
-                writer.write_with_color(':', COLOR_GRAY)?;
-            }
-
-            writer.write_char(' ')?;
-        }
-
-        Ok(())
-    }
-
-    fn format_target(&self, metadata: &Metadata<'static>, writer: &mut Writer<'_>) -> fmt::Result {
-        if self.display_target {
-            writer.set_color(COLOR_GRAY)?;
-            write!(writer, "{}:", metadata.target())?;
-            writer.reset_color()?;
+            writer.write_with_color(':', COLOR_GRAY)?;
             writer.write_char(' ')?;
         }
 
@@ -191,11 +175,16 @@ impl<TimeFormatT> DevLogEventFormat<TimeFormatT> {
         Ok(())
     }
 
-    fn format_source_location(
+    fn format_target_and_source_location(
         &self,
         metadata: &Metadata<'static>,
         writer: &mut Writer<'_>,
     ) -> fmt::Result {
+        let target = if self.display_target {
+            Some(metadata.target())
+        } else {
+            None
+        };
         let file_name = if self.display_filename {
             metadata.file()
         } else {
@@ -207,7 +196,7 @@ impl<TimeFormatT> DevLogEventFormat<TimeFormatT> {
             None
         };
 
-        if file_name.is_none() && line_number.is_none() {
+        if target.is_none() && file_name.is_none() && line_number.is_none() {
             return Ok(());
         }
 
@@ -215,17 +204,29 @@ impl<TimeFormatT> DevLogEventFormat<TimeFormatT> {
         writer.write_char(' ')?;
         writer.set_color(COLOR_GRAY)?;
 
-        match (file_name, line_number) {
-            (Some(file_name), Some(line_number)) => {
+        match (target, file_name, line_number) {
+            (Some(target), Some(file_name), Some(line_number)) => {
+                write!(writer, "{target} ({file_name}:{line_number})")?;
+            }
+            (Some(target), Some(file_name), None) => {
+                write!(writer, "{target} ({file_name})")?;
+            }
+            (Some(target), None, Some(line_number)) => {
+                write!(writer, "{target} ({line_number})")?;
+            }
+            (Some(target), None, None) => {
+                writer.write_str(target)?;
+            }
+            (None, Some(file_name), Some(line_number)) => {
                 write!(writer, "{file_name}:{line_number}")?;
             }
-            (Some(file_name), None) => {
+            (None, Some(file_name), None) => {
                 writer.write_str(file_name)?;
             }
-            (None, Some(line_number)) => {
+            (None, None, Some(line_number)) => {
                 write!(writer, "{line_number}")?;
             }
-            (None, None) => {}
+            (None, None, None) => {}
         }
 
         writer.reset_color()?;
