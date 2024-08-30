@@ -153,6 +153,27 @@ impl<'a> Visit for DevLogFieldVisitor<'a> {
         }
     }
 
+    fn record_str(&mut self, field: &Field, value: &str) {
+        if !self.first_visit {
+            self.delimit();
+        }
+
+        if self.result.is_err() {
+            return;
+        }
+
+        if self.first_visit {
+            self.first_visit = false;
+
+            match self.mode {
+                VisitorMode::Event => self.result = self.writer.write_str(value),
+                VisitorMode::Span => self.write_string_field(field, value),
+            }
+        } else {
+            self.write_string_field(field, value)
+        }
+    }
+
     fn record_error(&mut self, field: &Field, mut error: &(dyn Error + 'static)) {
         // If an error is the first message, that means we haven't got a main log message (since
         // that will be the first message, called "message"). In this case, we add special case
