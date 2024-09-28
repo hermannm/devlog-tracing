@@ -66,8 +66,8 @@ where
         self.format_timestamp(&mut writer)?;
         self.format_level(*metadata.level(), &mut writer)?;
         self.format_fields(ctx, &mut writer, event)?;
-        self.format_spans(ctx, &mut writer)?;
         self.format_target_and_source_location(metadata, &mut writer)?;
+        self.format_spans(ctx, &mut writer)?;
         self.format_thread_info(&mut writer)?;
 
         writeln!(writer)
