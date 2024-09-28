@@ -3,6 +3,8 @@ name = "devlog-tracing"
 version = "0.1.0"
 edition = "2021"
 authors = ["hermannm"]
+license = "MIT"
+description = "Log subscriber for the tracing library, with a human-readable output format designed for development builds."
 
 [dependencies]
 chrono = "0.4.38"
