@@ -4,6 +4,8 @@ Log subscriber for Rust's [`tracing`](https://github.com/tokio-rs/tracing) libra
 human-readable output format designed for development builds. Uses the same format as the
 [`devlog`](https://github.com/hermannm/devlog) library for Go.
 
+Run `cargo add devlog-tracing` to add it to your project!
+
 ## Usage
 
 `devlog-tracing` is pretty much a drop-in replacement for
