@@ -1,10 +1,14 @@
 [package]
 name = "devlog-tracing"
-version = "0.1.0"
+version = "0.1.1"
 edition = "2021"
 authors = ["hermannm"]
 license = "MIT"
 description = "Log subscriber for the tracing library, with a human-readable output format designed for development builds."
+keywords = ["logging", "tracing", "subscriber"]
+categories = ["development-tools::debugging"]
+repository = "https://github.com/hermannm/devlog-tracing"
+homepage = "https://hermannm.dev/devlog"
 
 [dependencies]
 chrono = "0.4.38"
