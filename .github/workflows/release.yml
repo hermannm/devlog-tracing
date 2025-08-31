@@ -1,0 +1,25 @@
+name: Release
+on:
+  push:
+    # Trigger release when a new semantic version tag (vX.Y.Z) is pushed
+    tags:
+      - v[0-9]+\.[0-9]+\.[0-9]+
+env:
+  FORCE_COLOR: 1 # For color output in GitHub Actions console (see https://force-color.org/)
+jobs:
+  create-release:
+    name: Create release
+    # `release-from-changelog` is a Docker action, which only works on Linux jobs
+    runs-on: ubuntu-latest
+    permissions:
+      # Unfortunately, creating a release requires `contents: write` permission
+      # https://github.com/orgs/community/discussions/68252
+      contents: write
+    steps:
+      # https://github.com/actions/checkout
+      - name: Checkout repository
+        uses: actions/checkout@v5
+      # Creates GitHub release from CHANGELOG.md entry for the pushed tag
+      # https://github.com/hermannm/release-from-changelog
+      - name: Create release from changelog
+        uses: hermannm/release-from-changelog@v0.2.5
