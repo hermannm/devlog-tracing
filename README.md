@@ -6,6 +6,8 @@ human-readable output format designed for development builds. Uses the same form
 
 Run `cargo add devlog-tracing` to add it to your project!
 
+**Contents:** [crates.io/crates/devlog-tracing](https://crates.io/crates/devlog-tracing)
+
 **Contents:**
 
 - [Usage](#usage)
