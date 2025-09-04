@@ -11,7 +11,7 @@ Run `cargo add devlog-tracing` to add it to your project!
 **Contents:**
 
 - [Usage](#usage)
-- [Developer's guide](#developers-guide)
+- [Maintainer's guide](#maintainers-guide)
 
 ## Usage
 
@@ -39,7 +39,9 @@ error!(cause = "UNKNOWN_TABLE", "Database query failed");
 
 ![Screenshot of log messages in a terminal](https://github.com/hermannm/devlog-tracing/blob/372bbd5d08bac0c900d6124d36f4af2efc398dfe/devlog-tracing-example-output.png?raw=true)
 
-When publishing a new release:
+## Maintainer's guide
+
+Publishing a new release:
 
 - Run tests:
   ```
