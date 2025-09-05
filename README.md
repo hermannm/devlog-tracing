@@ -41,7 +41,7 @@ error!(cause = "UNKNOWN_TABLE", "Database query failed");
 
 ## Maintainer's guide
 
-Publishing a new release:
+### Publishing a new release
 
 - Run tests:
   ```
