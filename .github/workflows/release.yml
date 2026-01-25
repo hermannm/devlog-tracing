@@ -22,4 +22,4 @@ jobs:
       # Creates GitHub release from CHANGELOG.md entry for the pushed tag
       # https://github.com/hermannm/release-from-changelog
       - name: Create release from changelog
-        uses: hermannm/release-from-changelog@v0.2.5
+        uses: hermannm/release-from-changelog@v0.2.6
