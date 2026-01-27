@@ -10,6 +10,9 @@ categories = ["development-tools::debugging"]
 repository = "https://github.com/hermannm/devlog-tracing"
 homepage = "https://hermannm.dev/devlog"
 
+[lib]
+doctest = false
+
 [dependencies]
 chrono = "0.4.43"
 tracing = "0.1.44"
