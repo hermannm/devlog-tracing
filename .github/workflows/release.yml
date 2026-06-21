@@ -16,10 +16,10 @@ jobs:
       # https://github.com/orgs/community/discussions/68252
       contents: write
     steps:
-      # https://github.com/actions/checkout
+      # https://github.com/actions/checkout/releases
       - name: Checkout repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       # Creates GitHub release from CHANGELOG.md entry for the pushed tag
-      # https://github.com/hermannm/release-from-changelog
+      # https://github.com/hermannm/release-from-changelog/releases
       - name: Create release from changelog
-        uses: hermannm/release-from-changelog@v0.2.6
+        uses: hermannm/release-from-changelog@9c104544ddef1aacdd5c6dde690545b7954bca64 # v0.2.6

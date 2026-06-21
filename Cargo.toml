@@ -14,7 +14,7 @@ homepage = "https://hermannm.dev/devlog"
 doctest = false
 
 [dependencies]
-chrono = "0.4.43"
+chrono = "0.4.45"
 tracing = "0.1.44"
 tracing-core = "0.1.36"
-tracing-subscriber = "0.3.22"
+tracing-subscriber = "0.3.23"
